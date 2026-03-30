@@ -11,4 +11,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/sceneA.unity
     guid: a2b5944fb164d354d94839d7657a6b12
-  m_configObjects: {}
+  m_configObjects:
+    UnityEditor.XR.ARKit.ARKitSettings: {fileID: 11400000, guid: 5d5bdba3305cd0545a78a0c1a60065db,
+      type: 2}
+    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: 7b5a6289710ccd04f858a452bc9bf727,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 38f9e73c90c8af9479cafedbe7970b95,
+      type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: da9346d65e41b294c8f77c41488cb031,
+      type: 2}
+  m_UseUCBPForAssetBundles: 0
