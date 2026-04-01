@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public float sprintMultiplier = 2.0f;
     public float mouseSensitivity = 200f;
     public GameObject projectile;
+    public Transform firePoint;
 
     void Update()
     {
@@ -45,7 +47,7 @@ public class PlayerController : MonoBehaviour
         // Shoot projectile
         if (Input.GetMouseButtonDown(0)) 
         {
-            Instantiate(projectile, transform.position, transform.rotation);
+            Instantiate(projectile, firePoint.position, firePoint.rotation);
         }
     }
 }

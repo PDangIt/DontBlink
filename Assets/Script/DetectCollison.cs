@@ -18,7 +18,18 @@ public class DetectCollison : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Destroy(gameObject);
-        Destroy(other.gameObject);
+        if (other.CompareTag("Enemy"))
+        {
+            Destroy(other.gameObject);
+            Destroy(gameObject);
+        }
+        else if (other.CompareTag("Wall"))
+        {
+            Destroy(gameObject); // only destroy projectile
+        }
+        if (other.CompareTag("Player"))
+        {
+            Debug.Log("Player Hit!");
+        }
     }
 }
