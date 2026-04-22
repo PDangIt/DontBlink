@@ -2,46 +2,49 @@ using UnityEngine;
 
 public class EnemyFollow : MonoBehaviour
 {
-    public float speed = 0.001f;
+    public float speed = 2f;
     public Transform player;
 
     void Start()
     {
-        player = GameObject.Find("VR Player Camera").transform; // VR headset position
+        GameObject cam = GameObject.Find("VR Player Camera");
+
+        if (cam != null)
+        {
+            player = cam.transform;
+        }
+        else if (Camera.main != null)
+        {
+            player = Camera.main.transform;
+        }
     }
 
     void Update()
+{
+    if (player == null) return;
+
+    Vector3 directionToPlayer = player.position - transform.position;
+    directionToPlayer.y = 0f;
+
+    // Check if player is looking at the angel
+    Vector3 directionToAngel = transform.position - player.position;
+    float dot = Vector3.Dot(player.forward, directionToAngel.normalized);
+
+    bool isBeingLookedAt = dot > 0.7f;
+
+    if (!isBeingLookedAt)
     {
-        Vector3 direction = player.position - transform.position;
-
-        // 🔑 Ignore vertical movement
-        direction.y = 0f;
-
-        float distance = direction.magnitude;
-
-        if (distance > 2f) // stopping distance
+        // MOVE
+        if (directionToPlayer.magnitude > 2f)
         {
-            direction = direction.normalized;
-            transform.position += direction * speed * Time.deltaTime;
-        }
-
-        // 🔑 Rotate only on Y axis (no tilting)
-        if (direction != Vector3.zero)
-        {
-            transform.rotation = Quaternion.LookRotation(direction);
+            transform.position += directionToPlayer.normalized * speed * Time.deltaTime;
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    // ALWAYS face player
+    if (directionToPlayer != Vector3.zero)
     {
-        if (collision.gameObject.CompareTag("Wall"))
-        {
-            // Simple stop or redirect
-            speed = 0f;
-        }
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            Debug.Log("Player Hit!");
-        }
+        transform.rotation = Quaternion.LookRotation(directionToPlayer);
     }
+}
 }
