@@ -2,49 +2,56 @@ using UnityEngine;
 
 public class EnemyFollow : MonoBehaviour
 {
-    public float speed = 2f;
+    public float speed = 3f;
     public Transform player;
 
-    void Start()
-    {
-        GameObject cam = GameObject.Find("VR Player Camera");
-
-        if (cam != null)
-        {
-            player = cam.transform;
-        }
-        else if (Camera.main != null)
-        {
-            player = Camera.main.transform;
-        }
-    }
-
     void Update()
-{
-    if (player == null) return;
-
-    Vector3 directionToPlayer = player.position - transform.position;
-    directionToPlayer.y = 0f;
-
-    // Check if player is looking at the angel
-    Vector3 directionToAngel = transform.position - player.position;
-    float dot = Vector3.Dot(player.forward, directionToAngel.normalized);
-
-    bool isBeingLookedAt = dot > 0.7f;
-
-    if (!isBeingLookedAt)
     {
-        // MOVE
-        if (directionToPlayer.magnitude > 2f)
+        if (player == null)
         {
-            transform.position += directionToPlayer.normalized * speed * Time.deltaTime;
+            if (Camera.main != null)
+            {
+                player = Camera.main.transform;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        Vector3 directionToPlayer = player.position - transform.position;
+        directionToPlayer.y = 0f;
+
+        Vector3 directionToAngel = transform.position - player.position;
+        float dot = Vector3.Dot(player.forward, directionToAngel.normalized);
+
+        bool isBeingLookedAt = dot > 0.7f;
+
+        if (!isBeingLookedAt)
+        {
+            if (directionToPlayer.magnitude > 2f)
+            {
+                transform.position += directionToPlayer.normalized * speed * Time.deltaTime;
+            }
+        }
+
+        if (directionToPlayer != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
         }
     }
 
-    // ALWAYS face player
-    if (directionToPlayer != Vector3.zero)
+    void OnCollisionEnter(Collision collision)
     {
-        transform.rotation = Quaternion.LookRotation(directionToPlayer);
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            speed = 0f;
+        }
+
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("Player Hit!");
+        }
     }
-}
 }
