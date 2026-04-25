@@ -167,6 +167,11 @@ PrefabInstance:
       propertyPath: m_IsKinematic
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3867668412115209124, guid: f8abbdd178867d2419ba9feb6ff2cba0,
+        type: 3}
+      propertyPath: stopDistance
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 9500000, guid: f8abbdd178867d2419ba9feb6ff2cba0, type: 3}
     m_RemovedGameObjects:
