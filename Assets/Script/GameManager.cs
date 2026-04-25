@@ -1,6 +1,6 @@
 using UnityEngine;
 using TMPro;
-
+using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public GameObject deathScreen;
@@ -15,6 +15,16 @@ public class GameManager : MonoBehaviour
             survivalTime += Time.deltaTime;
     }
 
+    void Awake()
+    {
+        Time.timeScale = 1f;
+
+        if (deathScreen != null)
+        {
+            deathScreen.SetActive(false);
+        }
+    }
+
     public void PlayerDied()
     {
         if (isDead) return;
@@ -27,4 +37,13 @@ public class GameManager : MonoBehaviour
 
         Time.timeScale = 0f;
     }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+        survivalTime = 0f;
+        isDead = false;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
 }
