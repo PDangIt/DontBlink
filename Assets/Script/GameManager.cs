@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         Time.timeScale = 1f;
+        FindUIReferences();
 
         if (deathScreen != null)
             deathScreen.SetActive(false);
@@ -47,6 +48,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void FindUIReferences()
+    {
+        if (deathScreen == null)
+            deathScreen = GameObject.Find("Death Screen");
+
+        if (scoreText == null && deathScreen != null)
+            scoreText = deathScreen.GetComponentInChildren<TextMeshProUGUI>(true);
+    }
+
     void TryFindLeftController()
     {
         if (leftHand.isValid) return;
@@ -57,6 +67,8 @@ public class GameManager : MonoBehaviour
     public void PlayerDied()
     {
         if (isDead) return;
+
+        FindUIReferences();
 
         isDead = true;
 
@@ -87,9 +99,17 @@ public class GameManager : MonoBehaviour
             Destroy(enemy);
         }
 
-        StartCoroutine(RestartSceneB());
+        if (XRSettings.isDeviceActive)
+        {
+            // VR: keep SceneA loaded, only reload SceneB
+            StartCoroutine(RestartSceneB());
+        }
+        else
+        {
+            // PC: clean reload SceneB normally
+            SceneManager.LoadScene(gameSceneName);
+        }
     }
-
     IEnumerator RestartSceneB()
     {
         Scene sceneB = SceneManager.GetSceneByName(gameSceneName);
@@ -100,6 +120,11 @@ public class GameManager : MonoBehaviour
         }
 
         yield return SceneManager.LoadSceneAsync(gameSceneName, LoadSceneMode.Additive);
+
+        FindUIReferences();
+
+        if (deathScreen != null)
+            deathScreen.SetActive(false);
 
         if (player != null)
         {
