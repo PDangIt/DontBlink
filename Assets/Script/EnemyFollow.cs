@@ -5,9 +5,10 @@ public class EnemyFollow : MonoBehaviour
     public float speed = 3f;
     public float stopDistance = 2f;
     public float killDistance = 4f;
-    public float lookThreshold = 0.7f;
+    public float lookThreshold = 0.75f;
 
     public Transform player;
+    public Transform head;
     private GameManager gm;
 
     void Start()
@@ -16,22 +17,20 @@ public class EnemyFollow : MonoBehaviour
 
         if (playerObj != null)
             player = playerObj.transform;
-        else if (Camera.main != null)
-            player = Camera.main.transform;
+        if (head == null && Camera.main != null)
+            head = Camera.main.transform;
 
         gm = FindFirstObjectByType<GameManager>();
     }
 
     void Update()
     {
-        if (player == null) return;
+        if (player == null || head == null) return;
 
+        // --- DISTANCE CHECK ---
         Vector3 directionToPlayer = player.position - transform.position;
-        directionToPlayer.y = 0f;
-
         float distance = directionToPlayer.magnitude;
 
-        // Death trigger by distance
         if (distance <= killDistance)
         {
             if (gm != null)
@@ -40,20 +39,19 @@ public class EnemyFollow : MonoBehaviour
             return;
         }
 
-        // Check if player is looking at angel
-        Vector3 directionToAngel = transform.position - player.position;
-        directionToAngel.y = 0f;
+        // --- LOOK CHECK ---
+        Vector3 directionToAngel = (transform.position - head.position).normalized;
 
-        float dot = Vector3.Dot(player.forward, directionToAngel.normalized);
+        float dot = Vector3.Dot(head.forward, directionToAngel);
         bool isBeingLookedAt = dot > lookThreshold;
 
-        // Move only when NOT being looked at
+        // --- MOVEMENT ---
         if (!isBeingLookedAt && distance > stopDistance)
         {
             transform.position += directionToPlayer.normalized * speed * Time.deltaTime;
         }
 
-        // Always face player
+        // --- FACE PLAYER ---
         if (directionToPlayer != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);

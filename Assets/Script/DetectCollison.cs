@@ -7,13 +7,21 @@ public class DetectCollison : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        Destroy(gameObject, 20f);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (transform.position.magnitude > 100f)
+        {
+            Destroy(gameObject);
+        }
         
+        if (transform.position.y < -10f)
+        {
+            Destroy(gameObject);
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -27,7 +35,7 @@ public class DetectCollison : MonoBehaviour
         {
             Destroy(gameObject); // only destroy projectile
         }
-        if (other.CompareTag("Player"))
+        else if (other.CompareTag("Player"))
         {
             Debug.Log("Player Hit!");
         }

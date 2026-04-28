@@ -10,11 +10,21 @@ public class Spawner : MonoBehaviour
     public float spawnRange = 18f; //spawn range along walls
     private float wallDistance = 28f; //wall placed at 30f - 2f for width
 
+    public Transform player;
+    public float safeRadius = 15f;
+
     private float startDelay = 2f;
     private float spawnIntreval = 2f;
     // Start is called before the first frame update
     void Start()
     {
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+                player = playerObj.transform;
+        }
+
         InvokeRepeating("SpawnRandomAnimal", startDelay, spawnIntreval);
     }
 
@@ -26,32 +36,45 @@ public class Spawner : MonoBehaviour
 
     void SpawnRandomAnimal()
     {
-        /*Vector3 spawnpos = new Vector3(Random.Range(-spawnrangex, spawnrangex), 0, spwanPosZ);
-        animalIndex = Random.Range(0, animalPrefabs.Length);
-        Instantiate(animalPrefabs[animalIndex], spawnpos, animalPrefabs[animalIndex].transform.rotation);*/
         int animalIndex = Random.Range(0, animalPrefabs.Length);
-        int side = Random.Range(0,4); //random for 4 walls
-        Vector3 spawnPos = Vector3.zero;
-        spawnPos = new Vector3(spawnPos.x, 0f, spawnPos.z);
 
-        switch (side)
+        Vector3 spawnPos;
+        bool validPosition = false;
+        int attempts = 0;
+
+        do
         {
-            case 0: // North (+Z)
-                spawnPos = new Vector3(Random.Range(-spawnRange, spawnRange), 0, wallDistance);
-                break;
+            int side = Random.Range(0, 4);
 
-            case 1: // South (-Z)
-                spawnPos = new Vector3(Random.Range(-spawnRange, spawnRange), 0, -wallDistance);
-                break;
+            switch (side)
+            {
+                case 0: // North (+Z)
+                    spawnPos = new Vector3(Random.Range(-spawnRange, spawnRange), 0, wallDistance);
+                    break;
 
-            case 2: // East (+X)
-                spawnPos = new Vector3(wallDistance, 0, Random.Range(-spawnRange, spawnRange));
-                break;
+                case 1: // South (-Z)
+                    spawnPos = new Vector3(Random.Range(-spawnRange, spawnRange), 0, -wallDistance);
+                    break;
 
-            case 3: // West (-X)
-                spawnPos = new Vector3(-wallDistance, 0, Random.Range(-spawnRange, spawnRange));
-                break;
-        }
+                case 2: // East (+X)
+                    spawnPos = new Vector3(wallDistance, 0, Random.Range(-spawnRange, spawnRange));
+                    break;
+
+                case 3: // West (-X)
+                    spawnPos = new Vector3(-wallDistance, 0, Random.Range(-spawnRange, spawnRange));
+                    break;
+
+                default:
+                    spawnPos = Vector3.zero;
+                    break;
+            }
+
+            float distanceToPlayer = Vector3.Distance(spawnPos, player.position);
+            validPosition = distanceToPlayer > safeRadius;
+
+            attempts++;
+
+        } while (!validPosition && attempts < 10);
 
         Instantiate(animalPrefabs[animalIndex], spawnPos, Quaternion.identity);
     }
