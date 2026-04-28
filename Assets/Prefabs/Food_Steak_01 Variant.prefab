@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Food_Steak_01 Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 116614, guid: 9f063c5e5835cbd4b8dc54a6c0b45db4, type: 3}
+      propertyPath: m_TagString
+      value: Projectile
+      objectReference: {fileID: 0}
     - target: {fileID: 442954, guid: 9f063c5e5835cbd4b8dc54a6c0b45db4, type: 3}
       propertyPath: m_RootOrder
       value: 0

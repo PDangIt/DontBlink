@@ -99,6 +99,13 @@ public class GameManager : MonoBehaviour
             Destroy(enemy);
         }
 
+        GameObject[] projectiles = GameObject.FindGameObjectsWithTag("Projectile");
+
+        foreach (GameObject proj in projectiles)
+        {
+            Destroy(proj);
+        }
+
         if (XRSettings.isDeviceActive)
         {
             // VR: keep SceneA loaded, only reload SceneB
@@ -126,10 +133,22 @@ public class GameManager : MonoBehaviour
         if (deathScreen != null)
             deathScreen.SetActive(false);
 
+        // 🔑 Re-acquire player
+        player = GameObject.FindWithTag("Player")?.transform;
+
+        // 🔑 Let XR systems settle
+        yield return null;
+
         if (player != null)
         {
+            CharacterController cc = player.GetComponent<CharacterController>();
+
+            if (cc != null) cc.enabled = false;
+
             player.position = restartPosition;
             player.rotation = Quaternion.identity;
+
+            if (cc != null) cc.enabled = true;
         }
     }
 }
